@@ -57,7 +57,7 @@ public class ListVidioActivity extends Activity {
                 itemPosition += 1;
             }
             if (itemPosition >= listView.getAdapter().getCount()) {
-                itemPosition--;
+                itemPosition = listView.getAdapter().getCount() - 1;
             }
             view = listView.getChildAt(itemPosition - visiblePosition);
             if (view == null) {
@@ -76,7 +76,17 @@ public class ListVidioActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_video);
         listView = (ListView) findViewById(R.id.video_list);
+        videoAdapter = new VideoAdapter(this);
 
+        List<MediaInfo> listInfos = getMediaInfos();
+        videoAdapter.setData(listInfos);
+        listView.setAdapter(videoAdapter);
+
+        setOnScrollListener();
+        setMediaPlayerListener();
+    }
+
+    private void setOnScrollListener() {
         listView.setOnScrollListener(new OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -91,17 +101,13 @@ public class ListVidioActivity extends Activity {
                 currentPosition = firstVisibleItem;
                 if (firstVisibleItem != playingPosition) {
                     MediaInfo info = list.get(playingPosition);
-                    MediaPlayerManager.getInstance().stopMediaPlayer(info.getVideoUrl());
+                    MediaPlayerManager.getInstance().hideVideoCanvas(info.getVideoUrl());
                 }
             }
         });
+    }
 
-        videoAdapter = new VideoAdapter(this);
-
-        List<MediaInfo> listInfos = getMediaInfos();
-        videoAdapter.setData(listInfos);
-        listView.setAdapter(videoAdapter);
-
+    private void setMediaPlayerListener() {
         MediaPlayerManager.getInstance().setMediaStateListener(new MediaStateListener() {
             @Override
             public void onStart() {
@@ -111,11 +117,6 @@ public class ListVidioActivity extends Activity {
             @Override
             public void onPrepare(int progress) {
 
-            }
-
-            @Override
-            public void onEnd(String path) {
-                updatePointItem(path, true);
             }
 
             private void updatePointItem(String path, boolean isPlaying) {
@@ -133,6 +134,11 @@ public class ListVidioActivity extends Activity {
                 updatePointItem(path, false);
                 updateListview(currentPosition, true);
             }
+
+            @Override
+            public void onCompletion(String path) {
+                updatePointItem(path, true);
+            }
         });
     }
 
@@ -140,24 +146,20 @@ public class ListVidioActivity extends Activity {
         list = new ArrayList<MediaInfo>();
 
         MediaInfo info1 = new MediaInfo();
-        info1.setVideoUrl("http://101.71.72.17/vweishi.tc.qq.com/1008_61ab8b772420486cb0a9ee647664c5e9.f20.mp4?vkey=D24FDDCB2B6E90BBBA5DC76DB6AED98BFE148A56C97266896E822284064143434F0B6851F4980E39&sha=d11b6aeb58051cdf0631b439e2d8922fea8ae345");
+        info1.setVideoUrl("http://101.71.72.17/vweishi.tc.qq.com/1008_30733e0922c1450da667e039ca809c2e.f30.mp4?vkey=F7A1849BEB0AC3E24E7A8E05C6D355CDD18BFED43495936DE3A04A121E5A2866CA7C69D9C9DE22B4&sha=bb72c85fce2cf953f78218a1dee0f78fa8b8ca44");
         list.add(info1);
 
         MediaInfo info2 = new MediaInfo();
-        info2.setVideoUrl("http://101.71.72.9/vweishi.tc.qq.com/1008_8d2a86a58b65451dbf1412415b8321d0.f30.mp4?vkey=618F31A8537E48A6C60D9323F5D25C891613305C1B3710FF7319C20B938571FA1D1EAFB9197468F6&sha=dbec97ebe966a3e0ce092c64e58f0d0afaa92ea9");
+        info2.setVideoUrl("http://101.71.72.17/vweishi.tc.qq.com/1008_6317f546b16846f2b11c373c69b80b7c.f30.mp4?vkey=2426C2F4D1704228A5D7E9B63BE656BDCAAD18B0C863B98F8163A908070D954E9CA45DB131149554&sha=11d558ae92a128f25");
         list.add(info2);
 
         MediaInfo info3 = new MediaInfo();
-        info3.setVideoUrl("http://101.71.72.20/vweishi.tc.qq.com/1008_e6df7f657c8a4995986443c898520282.f30.mp4?vkey=B73D1204BE2C4BAE8323D41159FFEF8BDE08C63B845C2A0EAC0F7F34C88E7D348487665F18E1F984&sha=20be72921735b277a9ab0ae81fd1501307dadabd");
+        info3.setVideoUrl("http://101.71.72.12/vweishi.tc.qq.com/1008_ef7f936a2f8a48deb453bb4ac9e49723.f30.mp4?vkey=205789E620DBC4FD9213EEB36C556C533F14451A3A081C7F1F728EC5C916161D7764E06892CDDB54&sha=b06a6a038cfade0b7");
         list.add(info3);
 
         MediaInfo info4 = new MediaInfo();
-        info4.setVideoUrl("http://101.71.72.21/vweishi.tc.qq.com/1008_e8689fc345434451b8e4e4c8889f8da2.f30.mp4?vkey=D62D0A7A43EA7D65D98AD19E10B865233ED25FC0F72E8A264C925BA98A2F4A47CC905724625FDA04&sha=f7abdfd39d43267b91f5bd0f9a1a9c033bafdd81");
+        info4.setVideoUrl("http://101.71.72.17/vweishi.tc.qq.com/1008_e42a9230906044f59054a64d93dad950.f30.mp4?vkey=7DF41B4027E9D50AC527618D0D6D0C07880339E991ACEEE4A74B471732BDA4F1E4709038876DA6D3&sha=c2243db4245ea3e96");
         list.add(info4);
-
-        MediaInfo info5 = new MediaInfo();
-        info5.setVideoUrl("http://101.71.72.17/vweishi.tc.qq.com/1008_61ab8b772420486cb0a9ee647664c5e9.f20.mp4?vkey=D6B1C5FA2945FD70362970D459B45163974657C7E63BFFF38C46832297056F4E1EC2C3084B174DAA&sha=d11b6aeb58051cdf0631b439e2d8922fea8ae345");
-        list.add(info5);
 
         return list;
     }

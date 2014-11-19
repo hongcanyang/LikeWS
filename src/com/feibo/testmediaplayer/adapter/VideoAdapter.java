@@ -51,7 +51,7 @@ public class VideoAdapter extends BaseAdapter {
         holder.frameLayout.setVisibility(View.GONE);
         holder.imageView.setVisibility(View.VISIBLE);
         holder.imageButton.setVisibility(View.VISIBLE);
-        MediaPlayerManager.getInstance().stopMediaPlayer(getItem(position).getVideoUrl());
+        MediaPlayerManager.getInstance().hideVideoCanvas(getItem(position).getVideoUrl());
 
         holder.imageButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -67,7 +67,7 @@ public class VideoAdapter extends BaseAdapter {
         String path = info.getVideoUrl();
         MediaPlayerManager manager = MediaPlayerManager.getInstance();
         if (isPlaying) {
-            manager.addMediaPlayer(holder.frameLayout, context, path);
+            manager.showVideoCanvas(holder.frameLayout, context, path);
             if (holder.frameLayout.getVisibility() == View.VISIBLE) {
                 return;
             }
@@ -75,7 +75,7 @@ public class VideoAdapter extends BaseAdapter {
             holder.imageView.setVisibility(View.GONE);
             holder.imageButton.setVisibility(View.GONE);
         } else {
-            manager.stopMediaPlayer(path);
+            manager.hideVideoCanvas(path);
             if (holder.frameLayout.getVisibility() == View.GONE) {
                 return;
             }
